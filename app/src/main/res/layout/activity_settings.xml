@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.SettingsActivity">
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/btn_close"
+            android:layout_width="@dimen/icon_size_big"
+            android:layout_height="@dimen/icon_size_big"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_close"
+            app:tint="@color/inverted" />
+
+        <TextView
+            style="@style/Header.Title"
+            android:layout_toEndOf="@id/btn_close"
+            android:text="Settings" />
+    </RelativeLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="7dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/settings_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp">
+
+            <TextView
+                style="@style/Settings.Header"
+                android:text="Account" />
+
+            <TextView
+                android:id="@+id/setting_edit_info"
+                style="@style/Settings.Option.Iconed"
+                android:text="Edit Info"
+                app:drawableStartCompat="@drawable/ic_edit_profile" />
+
+            <com.google.android.material.divider.MaterialDivider style="@style/Settings.Divider" />
+
+            <TextView
+                style="@style/Settings.Header"
+                android:text="Privacy and Security" />
+
+            <TextView
+                android:id="@+id/setting_change_password"
+                style="@style/Settings.Option.Iconed"
+                android:text="Change password"
+                app:drawableStartCompat="@drawable/ic_password" />
+
+            <com.google.android.material.divider.MaterialDivider style="@style/Settings.Divider" />
+
+            <TextView
+                style="@style/Settings.Header"
+                android:text="Appearance" />
+
+            <TextView
+                android:id="@+id/setting_theme"
+                style="@style/Settings.Option.Iconed"
+                android:text="Dark Mode"
+                app:drawableStartCompat="@drawable/ic_dark" />
+
+            <com.google.android.material.divider.MaterialDivider style="@style/Settings.Divider" />
+
+            <TextView
+                style="@style/Settings.Header"
+                android:text="Other" />
+
+            <TextView
+                android:id="@+id/setting_logout"
+                style="@style/Settings.Option.NonIconed"
+                android:text="Log out"
+                android:textColor="@color/text_warning" />
+
+            <com.google.android.material.divider.MaterialDivider style="@style/Settings.Divider" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

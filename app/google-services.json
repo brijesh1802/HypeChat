@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "682809453943",
+    "firebase_url": "https://hyepechat-default-rtdb.firebaseio.com",
+    "project_id": "hyepechat",
+    "storage_bucket": "hyepechat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:682809453943:android:edf90e9294039670ea8572",
+        "android_client_info": {
+          "package_name": "com.example.hypechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "682809453943-rc52llfrud921fimjjkgd1ig3o5lebh4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hypechat",
+            "certificate_hash": "6caa261e63185ce4e221aa2bb33443542675b4d1"
+          }
+        },
+        {
+          "client_id": "682809453943-0s33ib3tvvkv4sig4vcbn3faoct338su.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgfMebB38hFN_X_V4TElg4KmNTVg1dX1k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "682809453943-0s33ib3tvvkv4sig4vcbn3faoct338su.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
