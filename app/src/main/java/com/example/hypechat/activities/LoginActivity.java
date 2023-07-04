@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.example.hypechat.utilities.EmailSender;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -57,7 +58,10 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     private static final String PREFS_NAME = "MyPrefs";
     private static final String ALERT_DIALOG_SHOWN_KEY = "alertDialogShown";
-
+    SharedPreferences sharedPreferencs;
+    private static final String PREFSS_NAME = "MyPrefs";
+    int MAX_LOGIN_ATTEMPTS = 3;
+    private static final String LOGIN_ATTEMPTS_KEY = "loginAttempts";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,18 +73,29 @@ public class LoginActivity extends AppCompatActivity {
         googleButton = findViewById(R.id.btn_google);
         forgetPasswordButton = findViewById(R.id.btn_forget_password);
         signupText = findViewById(R.id.txt_signup);
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        sharedPreferencs = getSharedPreferences(PREFSS_NAME, MODE_PRIVATE);
+
+        int loginAttempts = sharedPreferencs.getInt(LOGIN_ATTEMPTS_KEY, 0);
+        if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+            sendPasswordChangeEmail(email.getText().toString());
+        }
         boolean alertDialogShown = sharedPreferences.getBoolean(ALERT_DIALOG_SHOWN_KEY, false);
-        
+
         if (!alertDialogShown) {
             // Show the alert dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Note:");
-            builder.setMessage("If you are using Android 13 or above please enable notifications for app in settings to continue in the app ,Ignore this message if u have already enabled notifications .");
+            builder.setMessage("If you are using Android 13 or above, please enable notifications for the app in settings to continue using the app. Ignore this message if you have already enabled notifications.");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     // Perform any action you want when the OK button is clicked
                     dialog.dismiss(); // Dismiss the dialog
+
+                    // Set the flag indicating that the dialog has been shown
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean(ALERT_DIALOG_SHOWN_KEY, true);
+                    editor.apply();
                 }
             });
             AlertDialog dialog = builder.create();
@@ -133,6 +148,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         auth.signInWithEmailAndPassword(strEmail, strPassword).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                resetLoginAttempts();
                 if (auth.getCurrentUser().isEmailVerified()) {
                     doValidUserShit();
                 } else {
@@ -140,9 +156,44 @@ public class LoginActivity extends AppCompatActivity {
                     auth.getCurrentUser().sendEmailVerification();
                 }
             } else {
-                Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Invalid Password", Toast.LENGTH_SHORT).show();
+                incrementLoginAttempts();
+                if (getLoginAttempts() >= MAX_LOGIN_ATTEMPTS) {
+                    sendPasswordChangeEmail(strEmail);
+                }
             }
         });
+    }
+
+    void incrementLoginAttempts() {
+        int loginAttempts = getLoginAttempts() + 1;
+        SharedPreferences.Editor editor = sharedPreferencs.edit();
+        editor.putInt(LOGIN_ATTEMPTS_KEY, loginAttempts);
+        editor.apply();
+    }
+
+    int getLoginAttempts() {
+        return sharedPreferencs.getInt(LOGIN_ATTEMPTS_KEY, 0);
+    }
+
+    void resetLoginAttempts() {
+        SharedPreferences.Editor editor = sharedPreferencs.edit();
+        editor.putInt(LOGIN_ATTEMPTS_KEY, 0);
+        editor.apply();
+    }
+
+    void sendPasswordChangeEmail(String strEmail) {
+        String subject = "Potential Unauthorized Access to Your Account";
+        String content = "Dear " + strEmail + ",\n\n" +
+                "We have detected multiple failed login attempts on your account. It appears that someone may be trying to gain unauthorized access. For your account's security, we recommend changing your password immediately.\n\n" +
+                "If you did not initiate these login attempts or suspect any fraudulent activity, please contact our customer support team immediately.\n\n" +
+                "Thank you for your attention to this matter. Ensuring the safety of your account is our top priority.\n\n" +
+                "Best regards,\n\n" +
+                "Brijesh Poojary\n" +
+                "HypeChat.Org\n" +
+                "hypechat.org@gmail.com";
+        EmailSender.sendEmail(strEmail, subject, content);
     }
 
 

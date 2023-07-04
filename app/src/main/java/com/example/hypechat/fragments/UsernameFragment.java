@@ -1,5 +1,6 @@
 package com.example.hypechat.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,6 +31,7 @@ public class UsernameFragment extends Fragment {
         this.parent = parent;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class UsernameFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 parent.data.put("username", s.toString());
-                if (!s.toString().matches("^\\w+$") || s.length() < 3 || s.length() > 15) {
+                if (!s.toString().matches("^\\w+$") || s.length() < 3 || s.length() > 12) {
                     valid = false;
                 }
                 for (String name : userNames) {

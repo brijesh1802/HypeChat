@@ -40,6 +40,8 @@ public class EditInfoActivity extends AppCompatActivity {
     ImageView saveInfoButton, closeButton, profileImageEditButton;
     boolean valid;
     List<String> userNames;
+    List<String> names;
+    List<String> bios;
 
     ActivityResultLauncher<Intent> myActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == Activity.RESULT_OK) {
@@ -76,6 +78,22 @@ public class EditInfoActivity extends AppCompatActivity {
                 userNames.add(user.getUsername());
             }
         });
+
+        names = new ArrayList<>();
+        FirebaseFirestore.getInstance().collection("Users").get().addOnSuccessListener(userSnapshots -> {
+            for (DocumentSnapshot userSnapshot : userSnapshots) {
+                User user = userSnapshot.toObject(User.class);
+                names.add(user.getName());
+            }
+        });
+
+        bios = new ArrayList<>();
+        FirebaseFirestore.getInstance().collection("Users").get().addOnSuccessListener(userSnapshots -> {
+            for (DocumentSnapshot userSnapshot : userSnapshots) {
+                User user = userSnapshot.toObject(User.class);
+                bios.add(user.getBio());
+            }
+        });
         username.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -89,7 +107,7 @@ public class EditInfoActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().matches("^\\w+$") || s.length() < 3 || s.length() > 15) {
+                if (!s.toString().matches("^\\w+$") || s.length() < 6 || s.length() > 12) {
                     valid = false;
                 }
                 for (String name : userNames) {
@@ -107,7 +125,69 @@ public class EditInfoActivity extends AppCompatActivity {
                 }
             }
         });
+        name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                valid = true;
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().matches("^\\w+$") || s.length() < 6 || s.length() > 15) {
+                    valid = false;
+                }
+                for (String name : names) {
+                    if (!name.equals(user.getName()) && name.equals(s.toString())) {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (!valid) {
+                    name.setTextColor(getResources().getColor(R.color.like));
+                    saveInfoButton.setClickable(false);
+                } else {
+                    name.setTextColor(getResources().getColor(R.color.inverted));
+                    saveInfoButton.setClickable(true);
+                }
+            }
+        });
+
+        bio.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                valid = true;
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().matches("^\\w+$") || s.length() < 5 || s.length() > 100) {
+                    valid = false;
+                }
+                for (String name : bios) {
+                    if (!name.equals(user.getUsername()) && name.equals(s.toString())) {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (!valid) {
+                    bio.setTextColor(getResources().getColor(R.color.like));
+                    saveInfoButton.setClickable(false);
+                } else {
+                    bio.setTextColor(getResources().getColor(R.color.inverted));
+                    saveInfoButton.setClickable(true);
+                }
+            }
+        });
         saveInfoButton.setOnClickListener(view -> {
             data.put("name", name.getText().toString());
             data.put("username", username.getText().toString());
